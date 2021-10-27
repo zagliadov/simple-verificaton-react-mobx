@@ -1,0 +1,36 @@
+version: '3.6'
+services:
+  graphTestClient:
+    image: node:latest
+    container_name: graphTestClient
+    working_dir: /app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - graphTestServer
+      - graphTestDB
+    command: npm start
+    volumes:
+      - ./client:/app
+  graphTestServer:
+    image: node:latest
+    container_name: graphTestServer
+    ports:
+      - '9001:9001'
+    depends_on:
+      - graphTestDB
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: npm run start:dev
+  
+  graphTestDB:
+    image: postgres:13
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=graphTestDB
+    ports:
+      - "5432:5432" 
+    volumes: 
+      - ./data/database-data:/var/lib/postgresql/data/
